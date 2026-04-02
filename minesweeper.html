@@ -1,0 +1,467 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>扫雷</title>
+  <style>
+    :root {
+      --bg: #f5f7fb;
+      --panel: #ffffff;
+      --line: #d9dfeb;
+      --text: #1f2937;
+      --muted: #6b7280;
+      --primary: #2563eb;
+      --danger: #ef4444;
+      --success: #16a34a;
+      --covered: #cfd8e3;
+      --covered-dark: #b6c2d1;
+      --open: #eef2f7;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      font-family: "Microsoft YaHei", system-ui, sans-serif;
+      background: linear-gradient(180deg, #eef4ff 0%, var(--bg) 100%);
+      color: var(--text);
+      min-height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: flex-start;
+      padding: 24px;
+    }
+
+    .app {
+      width: min(100%, 780px);
+      background: var(--panel);
+      border: 1px solid var(--line);
+      border-radius: 18px;
+      box-shadow: 0 10px 30px rgba(15, 23, 42, 0.08);
+      padding: 24px;
+    }
+
+    h1 {
+      margin: 0 0 16px;
+      font-size: 30px;
+    }
+
+    .toolbar {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px;
+      align-items: center;
+      margin-bottom: 16px;
+    }
+
+    .toolbar select,
+    .toolbar button {
+      height: 40px;
+      border-radius: 10px;
+      border: 1px solid var(--line);
+      padding: 0 14px;
+      font-size: 15px;
+      background: #fff;
+    }
+
+    .toolbar button {
+      background: var(--primary);
+      color: #fff;
+      border: none;
+      cursor: pointer;
+      font-weight: 700;
+    }
+
+    .toolbar button:hover {
+      filter: brightness(1.05);
+    }
+
+    .stats {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(120px, 1fr));
+      gap: 12px;
+      margin-bottom: 18px;
+    }
+
+    .card {
+      background: #f8fafc;
+      border: 1px solid var(--line);
+      border-radius: 14px;
+      padding: 12px 14px;
+    }
+
+    .label {
+      color: var(--muted);
+      font-size: 13px;
+      margin-bottom: 6px;
+    }
+
+    .value {
+      font-size: 20px;
+      font-weight: 800;
+    }
+
+    .tips {
+      color: var(--muted);
+      font-size: 14px;
+      margin-bottom: 14px;
+    }
+
+    #board {
+      display: grid;
+      gap: 2px;
+      width: fit-content;
+      background: var(--line);
+      border: 6px solid #e5ebf3;
+      border-radius: 10px;
+      padding: 2px;
+      user-select: none;
+      overflow: auto;
+      max-width: 100%;
+    }
+
+    .cell {
+      width: 34px;
+      height: 34px;
+      border: none;
+      font-size: 18px;
+      font-weight: 800;
+      cursor: pointer;
+      color: var(--text);
+      background: linear-gradient(145deg, #dde5ef, var(--covered));
+    }
+
+    .cell:hover:not(.open):not(.flagged) {
+      background: linear-gradient(145deg, #e8eef6, #d7e0eb);
+    }
+
+    .cell.open {
+      background: var(--open);
+      cursor: default;
+    }
+
+    .cell.mine {
+      background: #fee2e2;
+    }
+
+    .cell.exploded {
+      background: var(--danger);
+      color: #fff;
+    }
+
+    .cell.flagged {
+      color: #dc2626;
+    }
+
+    .n1 { color: #2563eb; }
+    .n2 { color: #16a34a; }
+    .n3 { color: #dc2626; }
+    .n4 { color: #1d4ed8; }
+    .n5 { color: #7c2d12; }
+    .n6 { color: #0891b2; }
+    .n7 { color: #111827; }
+    .n8 { color: #6b7280; }
+
+    .status-running { color: var(--primary); }
+    .status-win { color: var(--success); }
+    .status-lose { color: var(--danger); }
+
+    @media (max-width: 640px) {
+      .app {
+        padding: 16px;
+      }
+
+      .stats {
+        grid-template-columns: 1fr;
+      }
+
+      .cell {
+        width: 30px;
+        height: 30px;
+        font-size: 16px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="app">
+    <h1>扫雷</h1>
+
+    <div class="toolbar">
+      <select id="difficulty">
+        <option value="easy">初级 9×9 / 10雷</option>
+        <option value="medium">中级 16×16 / 40雷</option>
+        <option value="hard">高级 16×30 / 99雷</option>
+      </select>
+      <button id="restartBtn">重新开始</button>
+    </div>
+
+    <div class="stats">
+      <div class="card">
+        <div class="label">状态</div>
+        <div class="value status-running" id="status">进行中</div>
+      </div>
+      <div class="card">
+        <div class="label">剩余雷数</div>
+        <div class="value" id="minesLeft">10</div>
+      </div>
+      <div class="card">
+        <div class="label">计时</div>
+        <div class="value" id="timer">0 秒</div>
+      </div>
+    </div>
+
+    <div class="tips">操作说明：左键翻开格子，右键插旗。首次点击不会踩雷。</div>
+    <div id="board" aria-label="扫雷棋盘"></div>
+  </div>
+
+  <script>
+    const difficultyMap = {
+      easy: { rows: 9, cols: 9, mines: 10 },
+      medium: { rows: 16, cols: 16, mines: 40 },
+      hard: { rows: 16, cols: 30, mines: 99 }
+    };
+
+    const boardEl = document.getElementById("board");
+    const difficultyEl = document.getElementById("difficulty");
+    const restartBtn = document.getElementById("restartBtn");
+    const statusEl = document.getElementById("status");
+    const minesLeftEl = document.getElementById("minesLeft");
+    const timerEl = document.getElementById("timer");
+
+    let state = {};
+
+    function createGame(levelKey) {
+      const config = difficultyMap[levelKey];
+      clearInterval(state.timerId);
+
+      state = {
+        ...config,
+        board: [],
+        started: false,
+        finished: false,
+        revealed: 0,
+        flagged: 0,
+        startTime: 0,
+        timerId: null
+      };
+
+      statusEl.textContent = "进行中";
+      statusEl.className = "value status-running";
+      timerEl.textContent = "0 秒";
+      minesLeftEl.textContent = state.mines;
+
+      boardEl.style.gridTemplateColumns = `repeat(${state.cols}, 34px)`;
+      if (window.innerWidth <= 640) {
+        boardEl.style.gridTemplateColumns = `repeat(${state.cols}, 30px)`;
+      }
+
+      state.board = Array.from({ length: state.rows }, (_, row) =>
+        Array.from({ length: state.cols }, (_, col) => ({
+          row,
+          col,
+          mine: false,
+          revealed: false,
+          flagged: false,
+          adjacent: 0
+        }))
+      );
+
+      renderBoard();
+    }
+
+    function startTimer() {
+      state.startTime = Date.now();
+      state.timerId = setInterval(() => {
+        const seconds = Math.floor((Date.now() - state.startTime) / 1000);
+        timerEl.textContent = `${seconds} 秒`;
+      }, 1000);
+    }
+
+    function placeMines(firstRow, firstCol) {
+      const blocked = new Set();
+      blocked.add(`${firstRow},${firstCol}`);
+
+      let placed = 0;
+      while (placed < state.mines) {
+        const row = Math.floor(Math.random() * state.rows);
+        const col = Math.floor(Math.random() * state.cols);
+        const key = `${row},${col}`;
+        const cell = state.board[row][col];
+
+        if (blocked.has(key) || cell.mine) continue;
+
+        cell.mine = true;
+        placed++;
+      }
+
+      for (let row = 0; row < state.rows; row++) {
+        for (let col = 0; col < state.cols; col++) {
+          state.board[row][col].adjacent = countAdjacentMines(row, col);
+        }
+      }
+    }
+
+    function countAdjacentMines(row, col) {
+      let count = 0;
+      forEachNeighbor(row, col, (cell) => {
+        if (cell.mine) count++;
+      });
+      return count;
+    }
+
+    function forEachNeighbor(row, col, callback) {
+      for (let r = row - 1; r <= row + 1; r++) {
+        for (let c = col - 1; c <= col + 1; c++) {
+          if (r === row && c === col) continue;
+          if (r < 0 || c < 0 || r >= state.rows || c >= state.cols) continue;
+          callback(state.board[r][c]);
+        }
+      }
+    }
+
+    function revealCell(row, col) {
+      const cell = state.board[row][col];
+      if (state.finished || cell.revealed || cell.flagged) return;
+
+      if (!state.started) {
+        placeMines(row, col);
+        state.started = true;
+        startTimer();
+      }
+
+      cell.revealed = true;
+      state.revealed++;
+
+      if (cell.mine) {
+        endGame(false, row, col);
+        return;
+      }
+
+      if (cell.adjacent === 0) {
+        floodReveal(row, col);
+      }
+
+      checkWin();
+      renderBoard();
+    }
+
+    function floodReveal(startRow, startCol) {
+      const queue = [[startRow, startCol]];
+
+      while (queue.length) {
+        const [row, col] = queue.shift();
+        forEachNeighbor(row, col, (cell) => {
+          if (cell.revealed || cell.flagged || cell.mine) return;
+          cell.revealed = true;
+          state.revealed++;
+          if (cell.adjacent === 0) {
+            queue.push([cell.row, cell.col]);
+          }
+        });
+      }
+    }
+
+    function toggleFlag(row, col) {
+      const cell = state.board[row][col];
+      if (state.finished || cell.revealed) return;
+
+      cell.flagged = !cell.flagged;
+      state.flagged += cell.flagged ? 1 : -1;
+      minesLeftEl.textContent = Math.max(state.mines - state.flagged, 0);
+      renderBoard();
+    }
+
+    function checkWin() {
+      const safeCells = state.rows * state.cols - state.mines;
+      if (state.revealed >= safeCells) {
+        endGame(true);
+      }
+    }
+
+    function endGame(isWin, explodedRow = -1, explodedCol = -1) {
+      state.finished = true;
+      clearInterval(state.timerId);
+
+      if (isWin) {
+        statusEl.textContent = "胜利";
+        statusEl.className = "value status-win";
+        for (let row = 0; row < state.rows; row++) {
+          for (let col = 0; col < state.cols; col++) {
+            const cell = state.board[row][col];
+            if (cell.mine) cell.flagged = true;
+          }
+        }
+        state.flagged = state.mines;
+        minesLeftEl.textContent = "0";
+      } else {
+        statusEl.textContent = "踩雷了";
+        statusEl.className = "value status-lose";
+        for (let row = 0; row < state.rows; row++) {
+          for (let col = 0; col < state.cols; col++) {
+            const cell = state.board[row][col];
+            if (cell.mine) cell.revealed = true;
+          }
+        }
+        state.exploded = `${explodedRow},${explodedCol}`;
+      }
+
+      renderBoard();
+    }
+
+    function renderBoard() {
+      boardEl.innerHTML = "";
+
+      for (let row = 0; row < state.rows; row++) {
+        for (let col = 0; col < state.cols; col++) {
+          const cell = state.board[row][col];
+          const btn = document.createElement("button");
+          btn.className = "cell";
+          btn.dataset.row = row;
+          btn.dataset.col = col;
+
+          if (cell.revealed) {
+            btn.classList.add("open");
+            if (cell.mine) {
+              btn.textContent = "💣";
+              btn.classList.add("mine");
+              if (state.exploded === `${row},${col}`) {
+                btn.classList.add("exploded");
+              }
+            } else if (cell.adjacent > 0) {
+              btn.textContent = cell.adjacent;
+              btn.classList.add(`n${cell.adjacent}`);
+            }
+          } else if (cell.flagged) {
+            btn.textContent = "🚩";
+            btn.classList.add("flagged");
+          }
+
+          btn.addEventListener("click", () => revealCell(row, col));
+          btn.addEventListener("contextmenu", (event) => {
+            event.preventDefault();
+            toggleFlag(row, col);
+          });
+
+          boardEl.appendChild(btn);
+        }
+      }
+    }
+
+    difficultyEl.addEventListener("change", () => createGame(difficultyEl.value));
+    restartBtn.addEventListener("click", () => createGame(difficultyEl.value));
+
+    window.addEventListener("resize", () => {
+      boardEl.style.gridTemplateColumns =
+        window.innerWidth <= 640
+          ? `repeat(${state.cols}, 30px)`
+          : `repeat(${state.cols}, 34px)`;
+    });
+
+    createGame("easy");
+  </script>
+</body>
+</html>
