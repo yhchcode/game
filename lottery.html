@@ -1,0 +1,1474 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>顶呱刮《中国红》</title>
+  <style>
+    :root {
+      --bg-1: #5e0010;
+      --bg-2: #8d0018;
+      --bg-3: #c20b25;
+      --bg-4: #e21f34;
+      --panel: rgba(255, 246, 227, 0.12);
+      --gold-1: #ffd76a;
+      --gold-2: #fff0b8;
+      --gold-3: #fff8e8;
+      --ink: #fff9f0;
+      --deep: #7c0017;
+      --paper: #fff4d1;
+      --shadow: 0 28px 80px rgba(58, 0, 8, 0.42);
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      padding: 28px 16px;
+      font-family: "Microsoft YaHei", "PingFang SC", sans-serif;
+      color: var(--ink);
+      background:
+        radial-gradient(circle at top, rgba(255, 215, 106, 0.18), transparent 24%),
+        radial-gradient(circle at 15% 85%, rgba(255, 255, 255, 0.08), transparent 18%),
+        linear-gradient(160deg, #50000d 0%, #7b0017 30%, #a5031d 65%, #620012 100%);
+    }
+
+    .layout {
+      width: min(100%, 1220px);
+      margin: 0 auto;
+      display: grid;
+      grid-template-columns: minmax(0, 840px) minmax(280px, 340px);
+      gap: 22px;
+      align-items: start;
+    }
+
+    .ticket {
+      position: relative;
+      overflow: hidden;
+      border-radius: 30px;
+      padding: 24px;
+      background:
+        radial-gradient(circle at top right, rgba(255, 245, 212, 0.14), transparent 26%),
+        linear-gradient(180deg, var(--bg-4), var(--bg-3) 40%, var(--bg-2) 76%, var(--bg-1));
+      border: 2px solid rgba(255, 215, 106, 0.58);
+      box-shadow: var(--shadow);
+    }
+
+    .ticket::before,
+    .ticket::after {
+      content: "";
+      position: absolute;
+      inset: 14px;
+      border-radius: 22px;
+      pointer-events: none;
+    }
+
+    .ticket::before {
+      border: 1px solid rgba(255, 240, 184, 0.32);
+    }
+
+    .ticket::after {
+      background:
+        radial-gradient(circle at 25% 30%, rgba(255, 240, 184, 0.08), transparent 18%),
+        radial-gradient(circle at 78% 24%, rgba(255, 240, 184, 0.09), transparent 14%),
+        radial-gradient(circle at 66% 78%, rgba(255, 255, 255, 0.06), transparent 18%);
+      mix-blend-mode: screen;
+    }
+
+    .header {
+      position: relative;
+      display: grid;
+      grid-template-columns: 1fr auto;
+      gap: 16px;
+      align-items: center;
+      margin-bottom: 18px;
+    }
+
+    .brand {
+      display: flex;
+      gap: 14px;
+      align-items: center;
+    }
+
+    .seal,
+    .sport {
+      display: grid;
+      place-items: center;
+      border-radius: 50%;
+      color: var(--deep);
+      background: linear-gradient(180deg, var(--gold-2), var(--gold-1));
+      box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.68);
+    }
+
+    .seal {
+      width: 54px;
+      height: 54px;
+      font-size: 14px;
+      font-weight: 700;
+    }
+
+    .sport {
+      width: 42px;
+      height: 42px;
+      font-size: 12px;
+      font-weight: 700;
+    }
+
+    .title-group h1 {
+      margin: 0;
+      font-size: clamp(36px, 6vw, 58px);
+      line-height: 1;
+      letter-spacing: 0.16em;
+      color: var(--gold-3);
+      text-shadow: 0 8px 18px rgba(96, 0, 16, 0.35);
+    }
+
+    .title-group p {
+      margin: 8px 0 0;
+      font-size: 13px;
+      letter-spacing: 0.08em;
+      color: rgba(255, 249, 240, 0.84);
+    }
+
+    .meta {
+      min-width: 196px;
+      padding: 12px 14px;
+      border-radius: 18px;
+      border: 1px solid rgba(255, 240, 184, 0.26);
+      background: rgba(98, 0, 18, 0.28);
+      text-align: right;
+    }
+
+    .meta span,
+    .meta strong {
+      display: block;
+    }
+
+    .meta span {
+      font-size: 12px;
+      color: rgba(255, 249, 240, 0.74);
+    }
+
+    .meta strong {
+      margin-top: 6px;
+      color: var(--gold-2);
+      font-size: 26px;
+      letter-spacing: 0.06em;
+    }
+
+    .play-brief {
+      margin-bottom: 18px;
+      padding: 14px 16px;
+      border-radius: 18px;
+      border: 1px solid rgba(255, 240, 184, 0.22);
+      background: rgba(255, 248, 232, 0.08);
+      font-size: 13px;
+      line-height: 1.7;
+      color: rgba(255, 249, 240, 0.88);
+    }
+
+    .top-row {
+      display: grid;
+      grid-template-columns: 200px 1fr;
+      gap: 16px;
+      margin-bottom: 16px;
+    }
+
+    .panel {
+      position: relative;
+      border-radius: 22px;
+      padding: 16px;
+      background:
+        linear-gradient(180deg, rgba(255, 246, 227, 0.12), rgba(255, 246, 227, 0.06)),
+        rgba(107, 0, 20, 0.28);
+      border: 1px solid rgba(255, 240, 184, 0.24);
+    }
+
+    .panel-title {
+      margin: 0 0 12px;
+      display: flex;
+      justify-content: space-between;
+      gap: 10px;
+      align-items: center;
+    }
+
+    .panel-title strong {
+      font-size: 16px;
+      color: var(--gold-2);
+      letter-spacing: 0.08em;
+    }
+
+    .panel-title span {
+      font-size: 12px;
+      color: rgba(255, 249, 240, 0.72);
+    }
+
+    .scratch-zone {
+      position: relative;
+      overflow: hidden;
+      border-radius: 18px;
+      background:
+        radial-gradient(circle at top, rgba(255, 255, 255, 0.28), transparent 34%),
+        linear-gradient(135deg, #fff8e6, #ffd36b);
+      color: var(--deep);
+      box-shadow: inset 0 0 0 2px rgba(155, 0, 24, 0.1);
+      touch-action: none;
+    }
+
+    .scratch-canvas {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      cursor: crosshair;
+    }
+
+    .bonus-zone {
+      min-height: 176px;
+      display: grid;
+      place-items: center;
+      padding: 18px;
+      text-align: center;
+    }
+
+    .bonus-zone .tag {
+      font-size: 12px;
+      letter-spacing: 0.22em;
+      color: rgba(124, 0, 23, 0.72);
+    }
+
+    .bonus-amount {
+      margin: 10px 0 6px;
+      font-size: 44px;
+      font-weight: 700;
+      color: #bf001f;
+    }
+
+    .bonus-note {
+      font-size: 14px;
+      color: #973543;
+    }
+
+    .numbers-panel .scratch-zone {
+      min-height: 176px;
+      padding: 18px;
+    }
+
+    .number-grid {
+      position: relative;
+      z-index: 0;
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 12px;
+      height: 100%;
+      align-items: center;
+    }
+
+    .ball {
+      aspect-ratio: 1;
+      border-radius: 50%;
+      display: grid;
+      place-items: center;
+      background:
+        radial-gradient(circle at 30% 28%, rgba(255, 255, 255, 0.84), transparent 24%),
+        linear-gradient(180deg, #fffef9, #ffe7a1);
+      color: var(--deep);
+      font-size: clamp(22px, 3vw, 30px);
+      font-weight: 700;
+      border: 3px solid rgba(160, 0, 24, 0.14);
+      box-shadow: 0 12px 18px rgba(128, 26, 34, 0.14);
+    }
+
+    .main-panel .panel-title {
+      margin-bottom: 14px;
+    }
+
+    .game-board {
+      display: grid;
+      gap: 12px;
+    }
+
+    .game-board[data-layout="5"] {
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
+
+    .game-board[data-layout="10"] {
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+    }
+
+    .game-board[data-layout="20"] {
+      grid-template-columns: repeat(5, minmax(0, 1fr));
+    }
+
+    .game-cell {
+      position: relative;
+      min-height: 106px;
+      border-radius: 18px;
+      overflow: hidden;
+      background:
+        linear-gradient(180deg, rgba(255, 255, 255, 0.3), transparent 28%),
+        linear-gradient(135deg, #fff8e2, #ffd973);
+      box-shadow: inset 0 0 0 2px rgba(160, 0, 24, 0.1);
+      touch-action: none;
+    }
+
+    .game-cell.highlight {
+      outline: 3px solid rgba(255, 215, 106, 0.8);
+      box-shadow: 0 0 0 4px rgba(255, 215, 106, 0.18);
+    }
+
+    .cell-inner {
+      position: absolute;
+      inset: 0;
+      display: grid;
+      grid-template-rows: 1fr auto;
+      padding: 10px;
+      color: var(--deep);
+      text-align: center;
+    }
+
+    .cell-top {
+      display: grid;
+      place-items: center;
+      font-weight: 700;
+      font-size: clamp(22px, 3.4vw, 30px);
+    }
+
+    .symbol-red {
+      color: #c10928;
+    }
+
+    .symbol-lantern,
+    .symbol-knot {
+      font-size: 28px;
+    }
+
+    .cell-amount {
+      padding-top: 10px;
+      border-top: 1px dashed rgba(124, 0, 23, 0.24);
+      font-size: 19px;
+      font-weight: 700;
+      color: #b2001e;
+    }
+
+    .game-cell .scratch-canvas {
+      border-radius: 18px;
+    }
+
+    .footer-row {
+      margin-top: 18px;
+      display: grid;
+      grid-template-columns: 1.15fr 1fr 0.8fr;
+      gap: 14px;
+    }
+
+    .security-box,
+    .serial-box,
+    .counter-box {
+      min-height: 104px;
+    }
+
+    .security-code {
+      margin-top: 10px;
+      padding: 14px;
+      border-radius: 14px;
+      background: linear-gradient(135deg, #fff7dd, #f0c95e);
+      color: var(--deep);
+      text-align: center;
+      font-size: 28px;
+      font-weight: 700;
+      letter-spacing: 0.16em;
+    }
+
+    .serial-list {
+      display: grid;
+      gap: 12px;
+      color: rgba(255, 249, 240, 0.88);
+      font-size: 13px;
+      line-height: 1.6;
+    }
+
+    .qr {
+      width: 72px;
+      height: 72px;
+      border-radius: 10px;
+      background:
+        linear-gradient(90deg, #fff 12%, #000 12% 24%, #fff 24% 36%, #000 36% 48%, #fff 48% 60%, #000 60% 72%, #fff 72%),
+        linear-gradient(#000 12%, #fff 12% 24%, #000 24% 36%, #fff 36% 48%, #000 48% 60%, #fff 60% 72%, #000 72%);
+      box-shadow: inset 0 0 0 4px rgba(255, 255, 255, 0.7);
+    }
+
+    .counter-value {
+      margin-top: 12px;
+      font-size: 34px;
+      font-weight: 700;
+      color: var(--gold-2);
+      text-align: center;
+    }
+
+    .side {
+      display: grid;
+      gap: 18px;
+    }
+
+    .side-card {
+      border-radius: 24px;
+      padding: 18px;
+      background:
+        linear-gradient(180deg, rgba(255, 248, 232, 0.12), rgba(255, 248, 232, 0.05)),
+        rgba(95, 0, 18, 0.48);
+      border: 1px solid rgba(255, 240, 184, 0.2);
+      box-shadow: var(--shadow);
+    }
+
+    .face-tabs {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 10px;
+      margin-top: 12px;
+    }
+
+    .face-tab,
+    .btn {
+      border: 0;
+      border-radius: 16px;
+      padding: 12px 14px;
+      font-size: 14px;
+      font-weight: 700;
+      letter-spacing: 0.06em;
+      cursor: pointer;
+      transition: transform 160ms ease, opacity 160ms ease, box-shadow 160ms ease;
+    }
+
+    .face-tab:hover,
+    .btn:hover {
+      transform: translateY(-1px);
+    }
+
+    .face-tab.active,
+    .btn.primary {
+      color: var(--deep);
+      background: linear-gradient(180deg, var(--gold-2), var(--gold-1));
+      box-shadow: 0 12px 24px rgba(72, 0, 10, 0.22);
+    }
+
+    .face-tab:not(.active),
+    .btn.secondary {
+      color: var(--ink);
+      background: rgba(255, 255, 255, 0.08);
+      border: 1px solid rgba(255, 240, 184, 0.22);
+    }
+
+    .actions {
+      display: grid;
+      gap: 12px;
+      margin-top: 16px;
+    }
+
+    .result-total {
+      margin-top: 6px;
+      font-size: 40px;
+      font-weight: 700;
+      color: var(--gold-2);
+      line-height: 1;
+    }
+
+    .result-breakdown {
+      margin-top: 12px;
+      display: grid;
+      gap: 8px;
+      font-size: 13px;
+      line-height: 1.55;
+      color: rgba(255, 249, 240, 0.84);
+    }
+
+    .status {
+      margin-top: 14px;
+      padding: 12px 14px;
+      border-radius: 16px;
+      background: rgba(255, 248, 232, 0.08);
+      border: 1px solid rgba(255, 240, 184, 0.18);
+      font-size: 13px;
+      line-height: 1.6;
+      color: rgba(255, 249, 240, 0.88);
+    }
+
+    .wallet {
+      margin-top: 14px;
+      padding: 14px;
+      border-radius: 18px;
+      background:
+        linear-gradient(180deg, rgba(255, 240, 184, 0.16), rgba(255, 240, 184, 0.05)),
+        rgba(255, 248, 232, 0.05);
+      border: 1px solid rgba(255, 240, 184, 0.22);
+    }
+
+    .wallet-label {
+      font-size: 12px;
+      color: rgba(255, 249, 240, 0.72);
+      letter-spacing: 0.08em;
+    }
+
+    .wallet-value {
+      margin-top: 6px;
+      font-size: 34px;
+      line-height: 1;
+      font-weight: 700;
+      color: var(--gold-2);
+    }
+
+    .wallet-meta {
+      margin-top: 10px;
+      font-size: 13px;
+      line-height: 1.6;
+      color: rgba(255, 249, 240, 0.82);
+    }
+
+    .disabled {
+      opacity: 0.45;
+      cursor: not-allowed;
+      pointer-events: none;
+    }
+
+    .empty-tip {
+      display: grid;
+      place-items: center;
+      min-height: 140px;
+      border-radius: 18px;
+      border: 1px dashed rgba(255, 240, 184, 0.28);
+      color: rgba(255, 249, 240, 0.72);
+      font-size: 14px;
+      text-align: center;
+      padding: 18px;
+    }
+
+    .rules {
+      display: grid;
+      gap: 10px;
+      margin-top: 10px;
+      font-size: 13px;
+      line-height: 1.65;
+      color: rgba(255, 249, 240, 0.86);
+    }
+
+    .rules strong {
+      color: var(--gold-2);
+    }
+
+    @media (max-width: 1080px) {
+      .layout {
+        grid-template-columns: 1fr;
+      }
+
+      .side {
+        order: -1;
+      }
+    }
+
+    @media (max-width: 720px) {
+      .ticket {
+        padding: 18px;
+      }
+
+      .header,
+      .top-row,
+      .footer-row {
+        grid-template-columns: 1fr;
+      }
+
+      .brand {
+        align-items: flex-start;
+      }
+
+      .meta {
+        text-align: left;
+      }
+
+      .number-grid {
+        gap: 8px;
+      }
+
+      .game-board[data-layout="10"] {
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+      }
+
+      .game-board[data-layout="20"] {
+        grid-template-columns: repeat(4, minmax(0, 1fr));
+      }
+    }
+
+    @media (max-width: 520px) {
+      .game-board[data-layout="5"],
+      .game-board[data-layout="10"],
+      .game-board[data-layout="20"] {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+
+      .title-group h1 {
+        letter-spacing: 0.08em;
+      }
+    }
+  </style>
+</head>
+<body>
+  <main class="layout">
+    <section class="ticket">
+      <header class="header">
+        <div class="brand">
+          <div class="seal">顶呱刮</div>
+          <div class="sport">体彩</div>
+          <div class="title-group">
+            <h1>中国红</h1>
+            <p>中国体育彩票即开票 · 祥云暗纹喜庆版式</p>
+          </div>
+        </div>
+        <div class="meta">
+          <span>票面面值</span>
+          <strong id="faceValueLabel">20 元</strong>
+          <span id="topPrizeLabel">最高头奖 1000000 元</span>
+        </div>
+      </header>
+
+      <section class="play-brief" id="playBrief">
+        刮开中奖号码区，核对 4 个基准数字；再刮开主游戏区，若“我的号码”与任一中奖号码相同，即得该格奖金。刮出“红”为 2 倍，“灯笼”为 5 倍，20 元票刮出“中国结”可通吃主区全部金额。幸运奖独立中奖，全部奖金兼中兼得。
+      </section>
+
+      <div class="top-row">
+        <section class="panel">
+          <h2 class="panel-title">
+            <strong>幸运奖</strong>
+            <span id="bonusProgress">未刮开</span>
+          </h2>
+          <div class="scratch-zone bonus-zone" id="bonusZone">
+            <div>
+              <div class="tag">LUCKY BONUS</div>
+              <div class="bonus-amount" id="bonusAmount">¥18</div>
+              <div class="bonus-note">独立额外奖励</div>
+            </div>
+            <canvas class="scratch-canvas" id="bonusCanvas"></canvas>
+          </div>
+        </section>
+
+        <section class="panel numbers-panel">
+          <h2 class="panel-title">
+            <strong>中奖号码</strong>
+            <span id="numberProgress">未刮开</span>
+          </h2>
+          <div class="scratch-zone" id="numberZone">
+            <div class="number-grid" id="winningNumbers"></div>
+            <canvas class="scratch-canvas" id="numberCanvas"></canvas>
+          </div>
+        </section>
+      </div>
+
+      <section class="panel main-panel">
+        <h2 class="panel-title">
+          <strong>主游戏区</strong>
+          <span id="mainProgress">0 / 21 已开奖</span>
+        </h2>
+        <div class="game-board" id="gameBoard" data-layout="20"></div>
+      </section>
+
+      <div class="footer-row">
+        <section class="panel security-box">
+          <h2 class="panel-title">
+            <strong>保安区</strong>
+            <span>仅兑奖核验使用</span>
+          </h2>
+          <div class="security-code" id="securityCode">A9K7Q2</div>
+        </section>
+
+        <section class="panel serial-box">
+          <h2 class="panel-title">
+            <strong>票面序列号</strong>
+            <span>唯一编号 / 溯源二维码</span>
+          </h2>
+          <div class="serial-list">
+            <div id="serialNumber">No. 20260629-CH-000001</div>
+            <div style="display:flex; gap:12px; align-items:center;">
+              <div class="qr" aria-hidden="true"></div>
+              <div>本票仅作前端展示，保安区提前刮开视为作废。</div>
+            </div>
+          </div>
+        </section>
+
+        <section class="panel counter-box">
+          <h2 class="panel-title">
+            <strong>中奖次数</strong>
+            <span>票面备注</span>
+          </h2>
+          <div class="counter-value" id="winCountLabel">0 次</div>
+        </section>
+      </div>
+    </section>
+
+    <aside class="side">
+      <section class="side-card">
+        <strong>票种选择</strong>
+        <div class="face-tabs">
+          <button class="face-tab" type="button" data-face="5">5 元</button>
+          <button class="face-tab" type="button" data-face="10">10 元</button>
+          <button class="face-tab active" type="button" data-face="20">20 元</button>
+        </div>
+        <div class="wallet">
+          <div class="wallet-label">钱袋余额</div>
+          <div class="wallet-value" id="walletAmount">¥30</div>
+          <div class="wallet-meta" id="walletMeta">每次购买会先扣除对应面值，开奖后中奖金额自动返还。</div>
+        </div>
+        <div class="actions">
+          <button class="btn primary" id="newTicketButton" type="button">购买一张</button>
+        </div>
+        <div class="status" id="statusText">当前未购买彩票。请选择面值后点击“购买一张”。</div>
+      </section>
+
+      <section class="side-card">
+        <strong>中奖汇总</strong>
+        <div class="result-total" id="totalPrize">¥0</div>
+        <div style="margin-top:10px; font-size:13px; color:rgba(255, 249, 240, 0.8);" id="tierLabel">当前奖级：未开奖</div>
+        <div class="result-breakdown" id="breakdown">
+          <div>基础匹配奖：¥0</div>
+          <div>“红”两倍奖：¥0</div>
+          <div>灯笼五倍奖：¥0</div>
+          <div>中国结通吃奖：¥0</div>
+          <div>幸运奖：¥0</div>
+        </div>
+      </section>
+
+      <section class="side-card">
+        <strong>规则摘要</strong>
+        <div class="rules" id="ruleSummary">
+          <div><strong>通用：</strong>4 个中奖号码为全部主区比对基准，幸运奖独立计算。</div>
+          <div><strong>5 元：</strong>9 格，含数字与“红”两倍。</div>
+          <div><strong>10 元：</strong>13 格，新增灯笼五倍。</div>
+          <div><strong>20 元：</strong>21 格，新增中国结通吃主区全部金额。</div>
+        </div>
+      </section>
+    </aside>
+  </main>
+
+  <script>
+    const FACE_RULES = {
+      5: {
+        label: "5 元",
+        topPrize: "最高头奖 100000 元",
+        count: 9,
+        layout: 5,
+        symbols: ["number", "red"],
+        brief: "刮开 4 个中奖号码；主游戏区共 9 格，号码匹配即得本格奖金，刮出“红”字本格奖金乘 2；幸运奖金额独立累计。",
+        tiers: [
+          { level: "一等奖", prize: 100000, odds: 1 / 500000 },
+          { level: "二等奖", prize: 10000, odds: 0.00002 },
+          { level: "三等奖", prize: 5000, odds: 0.00005 },
+          { level: "四等奖", prize: 500, odds: 0.0004 },
+          { level: "五等奖", prize: 200, odds: 0.0015 },
+          { level: "六等奖", prize: 100, odds: 0.0035 },
+          { level: "七等奖", prize: 50, odds: 0.009 },
+          { level: "八等奖", prize: 10, odds: 0.12 },
+          { level: "九等奖", prize: 5, odds: 0.513528 }
+        ],
+        overallWinRate: 0.648
+      },
+      10: {
+        label: "10 元",
+        topPrize: "最高头奖 250000 元",
+        count: 13,
+        layout: 10,
+        symbols: ["number", "red", "lantern"],
+        brief: "刮开 4 个中奖号码；主游戏区共 13 格，号码匹配得奖，“红”字为 2 倍，灯笼为 5 倍；幸运奖独立计算。",
+        tiers: [
+          { level: "一等奖", prize: 250000, odds: 1 / 500000 },
+          { level: "二等奖", prize: 100000, odds: 1 / 100000 },
+          { level: "三等奖", prize: 10000, odds: 1 / 20000 },
+          { level: "四等奖", prize: 5000, odds: 1 / 10000 },
+          { level: "五等奖", prize: 200, odds: 1 / 500 },
+          { level: "六等奖", prize: 100, odds: 1 / 200 },
+          { level: "七等奖", prize: 50, odds: 1 / 100 },
+          { level: "八等奖", prize: 20, odds: 1 / 50 },
+          { level: "九等奖", prize: 10, odds: 1 / 6.5 }
+        ],
+        overallWinRate: 0.651
+      },
+      20: {
+        label: "20 元",
+        topPrize: "最高头奖 1000000 元",
+        count: 21,
+        layout: 20,
+        symbols: ["number", "red", "lantern", "knot"],
+        brief: "刮开 4 个中奖号码；主游戏区共 21 格，号码匹配得奖，“红”字为 2 倍，灯笼为 5 倍，中国结直接通吃主区全部金额；幸运奖另计。",
+        tiers: [
+          { level: "一等奖", prize: 1000000, odds: 1 / 500000 },
+          { level: "二等奖", prize: 100000, odds: 1 / 100000 },
+          { level: "三等奖", prize: 10000, odds: 1 / 20000 },
+          { level: "四等奖", prize: 5000, odds: 1 / 10000 },
+          { level: "五等奖", prize: 1000, odds: 1 / 2000 },
+          { level: "六等奖", prize: 500, odds: 1 / 1000 },
+          { level: "七等奖", prize: 200, odds: 1 / 500 },
+          { level: "八等奖", prize: 100, odds: 1 / 200 },
+          { level: "九等奖", prize: 50, odds: 1 / 100 },
+          { level: "十等奖", prize: 20, odds: 1 / 6.8 }
+        ],
+        overallWinRate: 0.652
+      }
+    };
+
+    const bonusCanvas = document.getElementById("bonusCanvas");
+    const numberCanvas = document.getElementById("numberCanvas");
+    const bonusZone = document.getElementById("bonusZone");
+    const numberZone = document.getElementById("numberZone");
+    const winningNumbersEl = document.getElementById("winningNumbers");
+    const gameBoard = document.getElementById("gameBoard");
+    const faceValueLabel = document.getElementById("faceValueLabel");
+    const topPrizeLabel = document.getElementById("topPrizeLabel");
+    const playBrief = document.getElementById("playBrief");
+    const bonusAmount = document.getElementById("bonusAmount");
+    const bonusProgress = document.getElementById("bonusProgress");
+    const numberProgress = document.getElementById("numberProgress");
+    const mainProgress = document.getElementById("mainProgress");
+    const securityCode = document.getElementById("securityCode");
+    const serialNumber = document.getElementById("serialNumber");
+    const winCountLabel = document.getElementById("winCountLabel");
+    const totalPrize = document.getElementById("totalPrize");
+    const tierLabel = document.getElementById("tierLabel");
+    const walletAmount = document.getElementById("walletAmount");
+    const walletMeta = document.getElementById("walletMeta");
+    const breakdown = document.getElementById("breakdown");
+    const statusText = document.getElementById("statusText");
+    const ruleSummary = document.getElementById("ruleSummary");
+    const newTicketButton = document.getElementById("newTicketButton");
+    const faceTabs = Array.from(document.querySelectorAll(".face-tab"));
+
+    let currentFace = 20;
+    let ticketState = null;
+    let walletBalance = 30;
+    let payoutClaimed = false;
+
+    function sampleTier(face) {
+      const rule = FACE_RULES[face];
+      const roll = Math.random();
+      let cursor = 0;
+
+      for (const tier of rule.tiers) {
+        cursor += tier.odds;
+        if (roll < cursor) {
+          return tier;
+        }
+      }
+
+      if (roll < rule.overallWinRate) {
+        return rule.tiers[rule.tiers.length - 1];
+      }
+
+      return null;
+    }
+
+    function randomInt(min, max) {
+      return Math.floor(Math.random() * (max - min + 1)) + min;
+    }
+
+    function shuffle(list) {
+      const copy = [...list];
+      for (let i = copy.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [copy[i], copy[j]] = [copy[j], copy[i]];
+      }
+      return copy;
+    }
+
+    function chooseWinningSymbol(face, targetAmount, allowKnot) {
+      const choices = [{ type: "number", divisor: 1 }];
+      if (targetAmount % 2 === 0) {
+        choices.push({ type: "red", divisor: 2 });
+      }
+      if (face >= 10 && targetAmount % 5 === 0) {
+        choices.push({ type: "lantern", divisor: 5 });
+      }
+      if (face === 20 && allowKnot) {
+        choices.push({ type: "knot", divisor: 1 });
+      }
+      return choices[Math.floor(Math.random() * choices.length)];
+    }
+
+    function allocatePayout(face, totalPrize) {
+      const rule = FACE_RULES[face];
+      const maxMainWins = face === 5 ? 3 : face === 10 ? 4 : 5;
+      const maxBonus = Math.min(totalPrize, face * 10);
+      const useBonus = totalPrize > 0 && Math.random() > 0.58;
+      const bonus = useBonus ? Math.min(face, maxBonus) : 0;
+      let remain = totalPrize - bonus;
+      const wins = [];
+      let attempts = 0;
+
+      if (remain <= 0) {
+        return { bonus: totalPrize, wins: [] };
+      }
+
+      while (remain > 0 && wins.length < maxMainWins && attempts < 100) {
+        attempts++;
+        const slotLeft = maxMainWins - wins.length;
+        const forceLast = slotLeft === 1;
+        const part = forceLast ? remain : Math.max(face, Math.min(remain, Math.floor(remain / randomInt(2, 4))));
+        const symbol = chooseWinningSymbol(face, part, remain === part && face === 20 && part >= face);
+        let amount = part;
+
+        if (symbol.type === "red") {
+          amount = Math.floor(part / 2);
+        } else if (symbol.type === "lantern") {
+          amount = Math.floor(part / 5);
+        }
+
+        if (symbol.type === "knot") {
+          wins.push({ type: "knot", amount: part, winAmount: part, label: "中国结" });
+          remain = 0;
+        } else {
+          const winAmount = symbol.type === "number" ? amount : amount * symbol.divisor;
+          if (winAmount <= 0 || winAmount > remain) {
+            continue;
+          }
+          wins.push({
+            type: symbol.type,
+            amount,
+            winAmount,
+            label: symbol.type === "red" ? "红" : ""
+          });
+          remain -= winAmount;
+        }
+      }
+
+      if (remain > 0) {
+        wins.push({ type: "number", amount: remain, winAmount: remain, label: "" });
+      }
+
+      return { bonus, wins };
+    }
+
+    function createTicket(face) {
+      const rule = FACE_RULES[face];
+      const pool = shuffle(Array.from({ length: 30 }, (_, index) => index + 1));
+      const winningNumbers = pool.slice(0, 4).sort((a, b) => a - b);
+      const tier = sampleTier(face);
+      const targetPrize = tier ? tier.prize : 0;
+      const payout = allocatePayout(face, targetPrize);
+      const cells = [];
+      const winningCells = shuffle(payout.wins);
+      const losingNumbers = shuffle(pool.filter((number) => !winningNumbers.includes(number)));
+
+      for (let i = 0; i < rule.count; i++) {
+        const payoutCell = winningCells[i];
+        if (payoutCell) {
+          if (payoutCell.type === "number") {
+            cells.push({
+              type: "number",
+              number: winningNumbers[randomInt(0, winningNumbers.length - 1)],
+              amount: payoutCell.amount,
+              winAmount: payoutCell.winAmount,
+              label: String(payoutCell.amount)
+            });
+          } else if (payoutCell.type === "red") {
+            cells.push({
+              type: "red",
+              amount: payoutCell.amount,
+              winAmount: payoutCell.winAmount,
+              label: "红"
+            });
+          } else if (payoutCell.type === "lantern") {
+            cells.push({
+              type: "lantern",
+              amount: payoutCell.amount,
+              winAmount: payoutCell.winAmount,
+              label: "🏮"
+            });
+          } else {
+            cells.push({
+              type: "knot",
+              amount: payoutCell.amount,
+              winAmount: payoutCell.winAmount,
+              label: "中国结"
+            });
+          }
+        } else {
+          const amount = face;
+          cells.push({
+            type: "number",
+            number: losingNumbers[i % losingNumbers.length],
+            amount,
+            winAmount: 0,
+            label: String(losingNumbers[i % losingNumbers.length])
+          });
+        }
+      }
+
+      return {
+        face,
+        tier,
+        targetPrize,
+        winningNumbers,
+        cells: shuffle(cells),
+        bonus: payout.bonus,
+        security: randomSecurityCode(),
+        serial: randomSerial(face),
+        revealed: {
+          bonus: false,
+          numbers: false,
+          main: 0
+        }
+      };
+    }
+
+    function randomSecurityCode() {
+      const chars = "ABCDEFGHJKLMNPQRSTUVWXYZ23456789";
+      let output = "";
+      for (let i = 0; i < 6; i++) {
+        output += chars[Math.floor(Math.random() * chars.length)];
+      }
+      return output;
+    }
+
+    function randomSerial(face) {
+      const stamp = new Date().toISOString().slice(0, 10).replace(/-/g, "");
+      return "No. " + stamp + "-CH" + face + "-" + String(randomInt(1, 999999)).padStart(6, "0");
+    }
+
+    function formatMoney(value) {
+      return "¥" + value;
+    }
+
+    function canAfford(face) {
+      return walletBalance >= face;
+    }
+
+    function isBankrupt() {
+      return walletBalance < 5;
+    }
+
+    function setControlsDisabled(lockAll) {
+      newTicketButton.disabled = lockAll;
+      newTicketButton.classList.toggle("disabled", lockAll);
+
+      faceTabs.forEach((tab) => {
+        const affordable = canAfford(Number(tab.dataset.face));
+        const disabled = lockAll || !affordable;
+        tab.disabled = disabled;
+        tab.classList.toggle("disabled", disabled);
+      });
+    }
+
+    function updateWalletUI(message) {
+      walletAmount.textContent = formatMoney(walletBalance);
+
+      if (isBankrupt()) {
+        walletMeta.textContent = "余额不足 5 元，已破产，不能继续刮奖。";
+        setControlsDisabled(true);
+        return;
+      }
+
+      walletMeta.textContent = message || "每次购买会先扣除对应面值，开奖后中奖金额自动返还。";
+      setControlsDisabled(false);
+    }
+
+    function claimPayoutIfNeeded() {
+      if (!ticketState || payoutClaimed) {
+        return;
+      }
+
+      walletBalance += ticketState.targetPrize || 0;
+      payoutClaimed = true;
+      updateWalletUI("本张已返奖 " + formatMoney(ticketState.targetPrize || 0) + "，可继续购票。");
+    }
+
+    function buildWinningNumbers(numbers) {
+      if (!numbers || numbers.length === 0) {
+        winningNumbersEl.innerHTML = '<div class="empty-tip">未购买彩票</div>';
+        return;
+      }
+
+      winningNumbersEl.innerHTML = numbers
+        .map((number) => '<div class="ball">' + number + "</div>")
+        .join("");
+    }
+
+    function describeCell(cell) {
+      if (cell.type === "red") {
+        return '<span class="symbol-red">红</span>';
+      }
+      if (cell.type === "lantern") {
+        return '<span class="symbol-lantern">🏮</span>';
+      }
+      if (cell.type === "knot") {
+        return '<span class="symbol-knot">中国结</span>';
+      }
+      return String(cell.number);
+    }
+
+    function buildGameBoard() {
+      if (!ticketState) {
+        gameBoard.innerHTML = '<div class="empty-tip">未购买彩票<br>点击“购买一张”后开始刮奖</div>';
+        return;
+      }
+
+      const face = ticketState.face;
+      gameBoard.dataset.layout = String(FACE_RULES[face].layout);
+      gameBoard.innerHTML = "";
+
+      ticketState.cells.forEach((cell, index) => {
+        const wrapper = document.createElement("div");
+        wrapper.className = "game-cell";
+        wrapper.dataset.index = String(index);
+        wrapper.innerHTML = [
+          '<div class="cell-inner">',
+          '<div class="cell-top">' + describeCell(cell) + "</div>",
+          '<div class="cell-amount">' + formatMoney(cell.amount) + "</div>",
+          "</div>",
+          '<canvas class="scratch-canvas"></canvas>'
+        ].join("");
+        gameBoard.appendChild(wrapper);
+      });
+    }
+
+    function drawSilverMask(ctx, width, height, text) {
+      ctx.clearRect(0, 0, width, height);
+      ctx.globalCompositeOperation = "source-over";
+      const cover = ctx.createLinearGradient(0, 0, width, height);
+      cover.addColorStop(0, "#f6f6f6");
+      cover.addColorStop(0.5, "#c8c8c8");
+      cover.addColorStop(1, "#9e9e9e");
+      ctx.fillStyle = cover;
+      ctx.fillRect(0, 0, width, height);
+
+      for (let i = -height; i < width; i += 20) {
+        ctx.strokeStyle = "rgba(255, 255, 255, 0.18)";
+        ctx.lineWidth = 7;
+        ctx.beginPath();
+        ctx.moveTo(i, 0);
+        ctx.lineTo(i + height, height);
+        ctx.stroke();
+      }
+
+      ctx.fillStyle = "rgba(104, 0, 20, 0.72)";
+      ctx.textAlign = "center";
+      ctx.textBaseline = "middle";
+      ctx.font = "700 18px Microsoft YaHei";
+      ctx.fillText(text, width / 2, height / 2);
+    }
+
+    function setupScratchSurface(canvas, label, onReveal) {
+      const ctx = canvas.getContext("2d", { willReadFrequently: true });
+      let drawing = false;
+      let revealed = false;
+
+      function clearMask() {
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+      }
+
+      function resize() {
+        const rect = canvas.parentElement.getBoundingClientRect();
+        const ratio = window.devicePixelRatio || 1;
+        canvas.width = Math.floor(rect.width * ratio);
+        canvas.height = Math.floor(rect.height * ratio);
+        canvas.style.width = rect.width + "px";
+        canvas.style.height = rect.height + "px";
+        ctx.setTransform(ratio, 0, 0, ratio, 0, 0);
+        drawSilverMask(ctx, rect.width, rect.height, label);
+        if (revealed) {
+          clearMask();
+        }
+      }
+
+      function pointFromEvent(event) {
+        const rect = canvas.getBoundingClientRect();
+        const source = event.touches ? event.touches[0] : event;
+        return {
+          x: source.clientX - rect.left,
+          y: source.clientY - rect.top
+        };
+      }
+
+      function scratch(x, y) {
+        ctx.globalCompositeOperation = "destination-out";
+        ctx.beginPath();
+        ctx.arc(x, y, 17, 0, Math.PI * 2);
+        ctx.fill();
+      }
+
+      function reveal() {
+        if (revealed) {
+          return;
+        }
+        revealed = true;
+        clearMask();
+        onReveal();
+      }
+
+      canvas.addEventListener("mousedown", (event) => {
+        if (revealed) {
+          return;
+        }
+        drawing = true;
+        const point = pointFromEvent(event);
+        scratch(point.x, point.y);
+        reveal();
+        event.preventDefault();
+      });
+
+      canvas.addEventListener("mousemove", (event) => {
+        if (!drawing || revealed) {
+          return;
+        }
+        const point = pointFromEvent(event);
+        scratch(point.x, point.y);
+        reveal();
+        event.preventDefault();
+      });
+
+      canvas.addEventListener("touchstart", (event) => {
+        if (revealed) {
+          return;
+        }
+        drawing = true;
+        const point = pointFromEvent(event);
+        scratch(point.x, point.y);
+        reveal();
+        event.preventDefault();
+      }, { passive: false });
+
+      canvas.addEventListener("touchmove", (event) => {
+        if (!drawing || revealed) {
+          return;
+        }
+        const point = pointFromEvent(event);
+        scratch(point.x, point.y);
+        reveal();
+        event.preventDefault();
+      }, { passive: false });
+
+      window.addEventListener("mouseup", () => {
+        drawing = false;
+      });
+      window.addEventListener("touchend", () => {
+        drawing = false;
+      });
+
+      return {
+        resize,
+        reveal,
+        reset: resize,
+        sync(nextRevealed) {
+          revealed = nextRevealed;
+          if (revealed) {
+            clearMask();
+          } else {
+            resize();
+          }
+        }
+      };
+    }
+
+    function computeSettlement() {
+      const cells = ticketState.cells;
+      let base = 0;
+      let red = 0;
+      let lantern = 0;
+      let knot = 0;
+      let winCount = 0;
+
+      cells.forEach((cell) => {
+        if (cell.type === "number" && cell.winAmount > 0) {
+          base += cell.winAmount;
+          winCount++;
+        } else if (cell.type === "red") {
+          red += cell.winAmount;
+          winCount++;
+        } else if (cell.type === "lantern") {
+          lantern += cell.winAmount;
+          winCount++;
+        } else if (cell.type === "knot") {
+          knot += cell.winAmount;
+          winCount++;
+        }
+      });
+
+      const bonus = ticketState.bonus;
+      const total = base + red + lantern + knot + bonus;
+
+      totalPrize.textContent = formatMoney(total);
+      tierLabel.textContent = "当前奖级：" + (ticketState.tier ? (ticketState.tier.level + " / " + formatMoney(ticketState.tier.prize)) : "未中奖");
+      breakdown.innerHTML = [
+        "<div>基础匹配奖：" + formatMoney(base) + "</div>",
+        "<div>“红”两倍奖：" + formatMoney(red) + "</div>",
+        "<div>灯笼五倍奖：" + formatMoney(lantern) + "</div>",
+        "<div>中国结通吃奖：" + formatMoney(knot) + "</div>",
+        "<div>幸运奖：" + formatMoney(bonus) + "</div>"
+      ].join("");
+      winCountLabel.textContent = winCount + " 次";
+    }
+
+    function updateStatus() {
+      if (!ticketState) {
+        bonusProgress.textContent = "未购票";
+        numberProgress.textContent = "未购票";
+        mainProgress.textContent = "未购票";
+        statusText.textContent = "当前未购买彩票。请选择面值后点击“购买一张”。";
+        return;
+      }
+
+      const done = ticketState.revealed;
+      const totalCells = ticketState.cells.length;
+      bonusProgress.textContent = done.bonus ? "已开奖" : "未刮开";
+      numberProgress.textContent = done.numbers ? "已开奖" : "未刮开";
+      mainProgress.textContent = done.main + " / " + totalCells + " 已开奖";
+
+      if (!done.numbers) {
+        statusText.textContent = "请先刮开中奖号码区，确认 4 个基准数字。";
+        return;
+      }
+      if (done.main < totalCells) {
+        statusText.textContent = "继续刮开主游戏区，逐格核对号码与特殊符号。";
+        return;
+      }
+      if (!done.bonus) {
+        statusText.textContent = "主游戏区已完成，最后刮开幸运奖并独立计入总奖金。";
+        return;
+      }
+
+      computeSettlement();
+      claimPayoutIfNeeded();
+      statusText.textContent = "本张彩票已全部开奖，所有奖项按规则兼中兼得并已汇总。";
+    }
+
+    function revealCell(index) {
+      const cellEl = gameBoard.children[index];
+      if (!cellEl || cellEl.dataset.revealed === "1") {
+        return;
+      }
+      cellEl.dataset.revealed = "1";
+      ticketState.revealed.main += 1;
+      const cell = ticketState.cells[index];
+      if (cell.winAmount > 0 || cell.type === "knot") {
+        cellEl.classList.add("highlight");
+      }
+      updateStatus();
+    }
+
+    function attachCellScratchers() {
+      Array.from(gameBoard.querySelectorAll(".game-cell")).forEach((cellEl, index) => {
+        const canvas = cellEl.querySelector("canvas");
+        const scratcher = setupScratchSurface(canvas, "刮开", () => revealCell(index));
+        scratcher.resize();
+        cellEl._scratcher = scratcher;
+      });
+    }
+
+    let bonusScratcher = null;
+    let numberScratcher = null;
+
+    function configureStaticText() {
+      const rule = FACE_RULES[ticketState.face];
+      faceValueLabel.textContent = rule.label;
+      topPrizeLabel.textContent = rule.topPrize;
+      playBrief.textContent = rule.brief;
+      bonusAmount.textContent = formatMoney(ticketState.bonus);
+      securityCode.textContent = ticketState.security;
+      serialNumber.textContent = ticketState.serial;
+      ruleSummary.innerHTML = [
+        "<div><strong>通用：</strong>4 个中奖号码为全部主区比对基准，幸运奖独立计算。</div>",
+        "<div><strong>" + rule.label + "：</strong>" + rule.brief + "</div>",
+        "<div><strong>概率：</strong>本页按新增概率图配置奖级分布；5 元面值因图片未列完整分档概率，按综合中奖率 64.8% 做近似分配。</div>",
+        "<div><strong>结算：</strong>同一格仅触发一种逻辑，不同格与幸运奖可叠加。</div>",
+        "<div><strong>核验：</strong>保安区仅用于兑奖校验，提前刮开视为作废。</div>"
+      ].join("");
+    }
+
+    function resetSummary() {
+      totalPrize.textContent = "¥0";
+      tierLabel.textContent = "当前奖级：" + (ticketState && ticketState.tier ? ticketState.tier.level + " / " + formatMoney(ticketState.tier.prize) : "未开奖");
+      breakdown.innerHTML = [
+        "<div>基础匹配奖：¥0</div>",
+        "<div>“红”两倍奖：¥0</div>",
+        "<div>灯笼五倍奖：¥0</div>",
+        "<div>中国结通吃奖：¥0</div>",
+        "<div>幸运奖：¥0</div>"
+      ].join("");
+      winCountLabel.textContent = "0 次";
+    }
+
+    function resetUnpurchasedView() {
+      bonusAmount.textContent = "--";
+      securityCode.textContent = "------";
+      serialNumber.textContent = "No. 未购票";
+      buildWinningNumbers([]);
+      buildGameBoard();
+      resetSummary();
+    }
+
+    function renderTicket(face) {
+      if (!canAfford(face)) {
+        updateWalletUI("余额不足 " + face + " 元，不能购买该面值彩票。");
+        statusText.textContent = "请选择当前余额可购买的面值。";
+        return;
+      }
+
+      currentFace = face;
+      walletBalance -= face;
+      payoutClaimed = false;
+      ticketState = createTicket(face);
+      configureStaticText();
+      resetSummary();
+      buildWinningNumbers(ticketState.winningNumbers);
+      buildGameBoard();
+      updateStatus();
+      updateWalletUI("已支付 " + formatMoney(face) + " 购买本张 " + face + " 元彩票。");
+
+      bonusScratcher = setupScratchSurface(bonusCanvas, "幸运奖", () => {
+        ticketState.revealed.bonus = true;
+        updateStatus();
+      });
+
+      numberScratcher = setupScratchSurface(numberCanvas, "中奖号码", () => {
+        ticketState.revealed.numbers = true;
+        updateStatus();
+      });
+
+      bonusScratcher.resize();
+      numberScratcher.resize();
+      attachCellScratchers();
+
+      faceTabs.forEach((tab) => {
+        tab.classList.toggle("active", Number(tab.dataset.face) === face);
+      });
+    }
+
+    faceTabs.forEach((tab) => {
+      tab.addEventListener("click", () => {
+        renderTicket(Number(tab.dataset.face));
+      });
+    });
+
+    newTicketButton.addEventListener("click", () => {
+      renderTicket(currentFace);
+    });
+
+    window.addEventListener("resize", () => {
+      if (bonusScratcher) {
+        bonusScratcher.resize();
+        bonusScratcher.sync(ticketState.revealed.bonus);
+      }
+      if (numberScratcher) {
+        numberScratcher.resize();
+        numberScratcher.sync(ticketState.revealed.numbers);
+      }
+      Array.from(gameBoard.children).forEach((cellEl) => {
+        if (cellEl._scratcher) {
+          cellEl._scratcher.resize();
+          cellEl._scratcher.sync(cellEl.dataset.revealed === "1");
+        }
+      });
+    });
+
+    resetUnpurchasedView();
+    updateWalletUI();
+    updateStatus();
+  </script>
+</body>
+</html>
