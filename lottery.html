@@ -545,6 +545,77 @@
       padding: 18px;
     }
 
+    .password-modal {
+      position: fixed;
+      inset: 0;
+      display: none;
+      place-items: center;
+      padding: 20px;
+      z-index: 30;
+      background: rgba(45, 0, 8, 0.58);
+      backdrop-filter: blur(8px);
+    }
+
+    .password-modal.show {
+      display: grid;
+    }
+
+    .password-card {
+      width: min(100%, 420px);
+      border-radius: 28px;
+      padding: 24px;
+      background:
+        radial-gradient(circle at top right, rgba(255, 240, 184, 0.18), transparent 30%),
+        linear-gradient(180deg, #c3142d, #960019 70%, #6d0014);
+      border: 1px solid rgba(255, 240, 184, 0.4);
+      box-shadow: 0 24px 70px rgba(53, 0, 9, 0.45);
+    }
+
+    .password-card h3 {
+      margin: 0;
+      font-size: 28px;
+      letter-spacing: 0.1em;
+      color: var(--gold-3);
+    }
+
+    .password-card p {
+      margin: 10px 0 0;
+      color: rgba(255, 249, 240, 0.86);
+      font-size: 14px;
+      line-height: 1.7;
+    }
+
+    .password-input {
+      width: 100%;
+      margin-top: 18px;
+      border: 1px solid rgba(255, 240, 184, 0.34);
+      border-radius: 16px;
+      padding: 14px 16px;
+      font-size: 18px;
+      letter-spacing: 0.18em;
+      color: var(--gold-3);
+      background: rgba(97, 0, 18, 0.42);
+      outline: none;
+    }
+
+    .password-input::placeholder {
+      color: rgba(255, 249, 240, 0.38);
+      letter-spacing: 0.08em;
+    }
+
+    .password-error {
+      min-height: 22px;
+      margin-top: 10px;
+      font-size: 13px;
+      color: #ffe39f;
+    }
+
+    .password-actions {
+      display: flex;
+      gap: 12px;
+      margin-top: 8px;
+    }
+
     .rules {
       display: grid;
       gap: 10px;
@@ -667,7 +738,7 @@
       <section class="panel main-panel">
         <h2 class="panel-title">
           <strong>主游戏区</strong>
-          <span id="mainProgress">0 / 21 已开奖</span>
+          <span id="mainProgress">0 / 20 已开奖</span>
         </h2>
         <div class="game-board" id="gameBoard" data-layout="20"></div>
       </section>
@@ -720,6 +791,7 @@
         </div>
         <div class="actions">
           <button class="btn primary" id="newTicketButton" type="button">购买一张</button>
+          <button class="btn secondary" id="revealAllButton" type="button">一键开奖</button>
         </div>
         <div class="status" id="statusText">当前未购买彩票。请选择面值后点击“购买一张”。</div>
       </section>
@@ -742,12 +814,25 @@
         <div class="rules" id="ruleSummary">
           <div><strong>通用：</strong>4 个中奖号码为全部主区比对基准，幸运奖独立计算。</div>
           <div><strong>5 元：</strong>9 格，含数字与“红”两倍。</div>
-          <div><strong>10 元：</strong>13 格，新增灯笼五倍。</div>
-          <div><strong>20 元：</strong>21 格，新增中国结通吃主区全部金额。</div>
+          <div><strong>10 元：</strong>12 格，新增灯笼五倍。</div>
+          <div><strong>20 元：</strong>20 格，新增中国结通吃主区全部金额。</div>
         </div>
       </section>
     </aside>
   </main>
+
+  <div class="password-modal" id="passwordModal">
+    <div class="password-card">
+      <h3>一键开奖</h3>
+      <p>找管理员花费￥1,000,000,000获取密码，解放双手</p>
+      <input class="password-input" id="passwordInput" type="password" inputmode="numeric" placeholder="输入密码">
+      <div class="password-error" id="passwordError"></div>
+      <div class="password-actions">
+        <button class="btn secondary" id="passwordCancelButton" type="button">取消</button>
+        <button class="btn primary" id="passwordConfirmButton" type="button">确认开奖</button>
+      </div>
+    </div>
+  </div>
 
   <script>
     const FACE_RULES = {
@@ -758,59 +843,62 @@
         layout: 5,
         symbols: ["number", "red"],
         brief: "刮开 4 个中奖号码；主游戏区共 9 格，号码匹配即得本格奖金，刮出“红”字本格奖金乘 2；幸运奖金额独立累计。",
+        displayAmounts: [5, 10, 20, 30, 50, 80, 100, 200, 500, 1000],
         tiers: [
-          { level: "一等奖", prize: 100000, odds: 1 / 500000 },
-          { level: "二等奖", prize: 10000, odds: 0.00002 },
-          { level: "三等奖", prize: 5000, odds: 0.00005 },
-          { level: "四等奖", prize: 500, odds: 0.0004 },
-          { level: "五等奖", prize: 200, odds: 0.0015 },
-          { level: "六等奖", prize: 100, odds: 0.0035 },
-          { level: "七等奖", prize: 50, odds: 0.009 },
-          { level: "八等奖", prize: 10, odds: 0.12 },
-          { level: "九等奖", prize: 5, odds: 0.513528 }
+          { level: "一等奖", prize: 100000, odds: 1 / 5000000 },
+          { level: "二等奖", prize: 10000, odds: 1 / 1000000 },
+          { level: "三等奖", prize: 5000, odds: 1 / 500000 },
+          { level: "四等奖", prize: 500, odds: 1 / 120000 },
+          { level: "五等奖", prize: 200, odds: 1 / 25000 },
+          { level: "六等奖", prize: 100, odds: 1 / 12000 },
+          { level: "七等奖", prize: 50, odds: 1 / 1200 },
+          { level: "八等奖", prize: 10, odds: 0.11 },
+          { level: "九等奖", prize: 5, odds: 0.22 }
         ],
-        overallWinRate: 0.648
+        overallWinRate: 0.34
       },
       10: {
         label: "10 元",
         topPrize: "最高头奖 250000 元",
-        count: 13,
+        count: 12,
         layout: 10,
         symbols: ["number", "red", "lantern"],
-        brief: "刮开 4 个中奖号码；主游戏区共 13 格，号码匹配得奖，“红”字为 2 倍，灯笼为 5 倍；幸运奖独立计算。",
+        brief: "刮开 4 个中奖号码；主游戏区共 12 格，号码匹配得奖，“红”字为 2 倍，灯笼为 5 倍；幸运奖独立计算。",
+        displayAmounts: [10, 20, 50, 80, 100, 200, 500, 1000, 5000],
         tiers: [
-          { level: "一等奖", prize: 250000, odds: 1 / 500000 },
-          { level: "二等奖", prize: 100000, odds: 1 / 100000 },
-          { level: "三等奖", prize: 10000, odds: 1 / 20000 },
-          { level: "四等奖", prize: 5000, odds: 1 / 10000 },
-          { level: "五等奖", prize: 200, odds: 1 / 500 },
-          { level: "六等奖", prize: 100, odds: 1 / 200 },
-          { level: "七等奖", prize: 50, odds: 1 / 100 },
-          { level: "八等奖", prize: 20, odds: 1 / 50 },
-          { level: "九等奖", prize: 10, odds: 1 / 6.5 }
+          { level: "一等奖", prize: 250000, odds: 1 / 5000000 },
+          { level: "二等奖", prize: 100000, odds: 1 / 1200000 },
+          { level: "三等奖", prize: 10000, odds: 1 / 200000 },
+          { level: "四等奖", prize: 5000, odds: 1 / 120000 },
+          { level: "五等奖", prize: 200, odds: 1 / 12000 },
+          { level: "六等奖", prize: 100, odds: 1 / 5000 },
+          { level: "七等奖", prize: 50, odds: 1 / 900 },
+          { level: "八等奖", prize: 20, odds: 0.09 },
+          { level: "九等奖", prize: 10, odds: 0.16 }
         ],
-        overallWinRate: 0.651
+        overallWinRate: 0.26
       },
       20: {
         label: "20 元",
         topPrize: "最高头奖 1000000 元",
-        count: 21,
+        count: 20,
         layout: 20,
         symbols: ["number", "red", "lantern", "knot"],
-        brief: "刮开 4 个中奖号码；主游戏区共 21 格，号码匹配得奖，“红”字为 2 倍，灯笼为 5 倍，中国结直接通吃主区全部金额；幸运奖另计。",
+        brief: "刮开 4 个中奖号码；主游戏区共 20 格，号码匹配得奖，“红”字为 2 倍，灯笼为 5 倍，中国结直接通吃主区全部金额；幸运奖另计。",
+        displayAmounts: [20, 50, 100, 200, 500, 1000, 2000, 5000, 10000],
         tiers: [
-          { level: "一等奖", prize: 1000000, odds: 1 / 500000 },
-          { level: "二等奖", prize: 100000, odds: 1 / 100000 },
-          { level: "三等奖", prize: 10000, odds: 1 / 20000 },
-          { level: "四等奖", prize: 5000, odds: 1 / 10000 },
-          { level: "五等奖", prize: 1000, odds: 1 / 2000 },
-          { level: "六等奖", prize: 500, odds: 1 / 1000 },
-          { level: "七等奖", prize: 200, odds: 1 / 500 },
-          { level: "八等奖", prize: 100, odds: 1 / 200 },
-          { level: "九等奖", prize: 50, odds: 1 / 100 },
-          { level: "十等奖", prize: 20, odds: 1 / 6.8 }
+          { level: "一等奖", prize: 1000000, odds: 1 / 8000000 },
+          { level: "二等奖", prize: 100000, odds: 1 / 1600000 },
+          { level: "三等奖", prize: 10000, odds: 1 / 250000 },
+          { level: "四等奖", prize: 5000, odds: 1 / 120000 },
+          { level: "五等奖", prize: 1000, odds: 1 / 15000 },
+          { level: "六等奖", prize: 500, odds: 1 / 7000 },
+          { level: "七等奖", prize: 200, odds: 1 / 1200 },
+          { level: "八等奖", prize: 100, odds: 1 / 650 },
+          { level: "九等奖", prize: 50, odds: 0.07 },
+          { level: "十等奖", prize: 20, odds: 0.13 }
         ],
-        overallWinRate: 0.652
+        overallWinRate: 0.21
       }
     };
 
@@ -838,12 +926,30 @@
     const statusText = document.getElementById("statusText");
     const ruleSummary = document.getElementById("ruleSummary");
     const newTicketButton = document.getElementById("newTicketButton");
+    const revealAllButton = document.getElementById("revealAllButton");
+    const passwordModal = document.getElementById("passwordModal");
+    const passwordInput = document.getElementById("passwordInput");
+    const passwordError = document.getElementById("passwordError");
+    const passwordCancelButton = document.getElementById("passwordCancelButton");
+    const passwordConfirmButton = document.getElementById("passwordConfirmButton");
     const faceTabs = Array.from(document.querySelectorAll(".face-tab"));
 
-    let currentFace = 20;
+    let selectedFace = 20;
     let ticketState = null;
     let walletBalance = 30;
-    let payoutClaimed = false;
+    let revealAuthorized = false;
+    
+    function createRunningTotals() {
+      return {
+        base: 0,
+        red: 0,
+        lantern: 0,
+        knot: 0,
+        bonus: 0,
+        total: 0,
+        winCount: 0
+      };
+    }
 
     function sampleTier(face) {
       const rule = FACE_RULES[face];
@@ -989,7 +1095,8 @@
             });
           }
         } else {
-          const amount = face;
+          const displayOptions = rule.displayAmounts;
+          const amount = displayOptions[Math.floor(Math.random() * displayOptions.length)];
           cells.push({
             type: "number",
             number: losingNumbers[i % losingNumbers.length],
@@ -1009,6 +1116,7 @@
         bonus: payout.bonus,
         security: randomSecurityCode(),
         serial: randomSerial(face),
+        totals: createRunningTotals(),
         revealed: {
           bonus: false,
           numbers: false,
@@ -1032,20 +1140,34 @@
     }
 
     function formatMoney(value) {
-      return "¥" + value;
+      return "¥" + Number(value).toLocaleString("zh-CN");
     }
 
     function canAfford(face) {
       return walletBalance >= face;
     }
 
+    function hasActiveTicket() {
+      if (!ticketState) {
+        return false;
+      }
+      const done = ticketState.revealed;
+      return !(done.bonus && done.numbers && done.main === ticketState.cells.length);
+    }
+
     function isBankrupt() {
-      return walletBalance < 5;
+      return walletBalance < 5 && !hasActiveTicket();
     }
 
     function setControlsDisabled(lockAll) {
       newTicketButton.disabled = lockAll;
       newTicketButton.classList.toggle("disabled", lockAll);
+      const noTicket = !ticketState;
+      const completed = ticketState
+        ? ticketState.revealed.bonus && ticketState.revealed.numbers && ticketState.revealed.main === ticketState.cells.length
+        : true;
+      revealAllButton.disabled = lockAll || noTicket || completed;
+      revealAllButton.classList.toggle("disabled", lockAll || noTicket || completed);
 
       faceTabs.forEach((tab) => {
         const affordable = canAfford(Number(tab.dataset.face));
@@ -1064,18 +1186,34 @@
         return;
       }
 
+      if (walletBalance < 5 && hasActiveTicket()) {
+        walletMeta.textContent = "这是最后一张可刮彩票，请先完成本张开奖。";
+        setControlsDisabled(false);
+        return;
+      }
+
       walletMeta.textContent = message || "每次购买会先扣除对应面值，开奖后中奖金额自动返还。";
       setControlsDisabled(false);
     }
 
-    function claimPayoutIfNeeded() {
-      if (!ticketState || payoutClaimed) {
+    function creditPayout(amount, message) {
+      if (!ticketState || amount <= 0) {
         return;
       }
+      walletBalance += amount;
+      updateWalletUI(message || ("已返奖 " + formatMoney(amount) + "。"));
+    }
 
-      walletBalance += ticketState.targetPrize || 0;
-      payoutClaimed = true;
-      updateWalletUI("本张已返奖 " + formatMoney(ticketState.targetPrize || 0) + "，可继续购票。");
+    function openPasswordModal() {
+      passwordModal.classList.add("show");
+      passwordError.textContent = "";
+      passwordInput.value = "";
+      passwordInput.focus();
+    }
+
+    function closePasswordModal() {
+      passwordModal.classList.remove("show");
+      passwordError.textContent = "";
     }
 
     function buildWinningNumbers(numbers) {
@@ -1153,7 +1291,7 @@
       ctx.fillText(text, width / 2, height / 2);
     }
 
-    function setupScratchSurface(canvas, label, onReveal) {
+    function setupScratchSurface(canvas, label, onReveal, threshold = 22) {
       const ctx = canvas.getContext("2d", { willReadFrequently: true });
       let drawing = false;
       let revealed = false;
@@ -1192,6 +1330,17 @@
         ctx.fill();
       }
 
+      function clearRate() {
+        const data = ctx.getImageData(0, 0, canvas.width, canvas.height).data;
+        let cleared = 0;
+        for (let i = 3; i < data.length; i += 4) {
+          if (data[i] === 0) {
+            cleared++;
+          }
+        }
+        return Math.round((cleared / (canvas.width * canvas.height)) * 100);
+      }
+
       function reveal() {
         if (revealed) {
           return;
@@ -1208,7 +1357,6 @@
         drawing = true;
         const point = pointFromEvent(event);
         scratch(point.x, point.y);
-        reveal();
         event.preventDefault();
       });
 
@@ -1218,7 +1366,9 @@
         }
         const point = pointFromEvent(event);
         scratch(point.x, point.y);
-        reveal();
+        if (clearRate() >= threshold) {
+          reveal();
+        }
         event.preventDefault();
       });
 
@@ -1229,7 +1379,6 @@
         drawing = true;
         const point = pointFromEvent(event);
         scratch(point.x, point.y);
-        reveal();
         event.preventDefault();
       }, { passive: false });
 
@@ -1239,7 +1388,9 @@
         }
         const point = pointFromEvent(event);
         scratch(point.x, point.y);
-        reveal();
+        if (clearRate() >= threshold) {
+          reveal();
+        }
         event.preventDefault();
       }, { passive: false });
 
@@ -1266,42 +1417,17 @@
     }
 
     function computeSettlement() {
-      const cells = ticketState.cells;
-      let base = 0;
-      let red = 0;
-      let lantern = 0;
-      let knot = 0;
-      let winCount = 0;
-
-      cells.forEach((cell) => {
-        if (cell.type === "number" && cell.winAmount > 0) {
-          base += cell.winAmount;
-          winCount++;
-        } else if (cell.type === "red") {
-          red += cell.winAmount;
-          winCount++;
-        } else if (cell.type === "lantern") {
-          lantern += cell.winAmount;
-          winCount++;
-        } else if (cell.type === "knot") {
-          knot += cell.winAmount;
-          winCount++;
-        }
-      });
-
-      const bonus = ticketState.bonus;
-      const total = base + red + lantern + knot + bonus;
-
-      totalPrize.textContent = formatMoney(total);
+      const totals = ticketState.totals;
+      totalPrize.textContent = formatMoney(totals.total);
       tierLabel.textContent = "当前奖级：" + (ticketState.tier ? (ticketState.tier.level + " / " + formatMoney(ticketState.tier.prize)) : "未中奖");
       breakdown.innerHTML = [
-        "<div>基础匹配奖：" + formatMoney(base) + "</div>",
-        "<div>“红”两倍奖：" + formatMoney(red) + "</div>",
-        "<div>灯笼五倍奖：" + formatMoney(lantern) + "</div>",
-        "<div>中国结通吃奖：" + formatMoney(knot) + "</div>",
-        "<div>幸运奖：" + formatMoney(bonus) + "</div>"
+        "<div>基础匹配奖：" + formatMoney(totals.base) + "</div>",
+        "<div>“红”两倍奖：" + formatMoney(totals.red) + "</div>",
+        "<div>灯笼五倍奖：" + formatMoney(totals.lantern) + "</div>",
+        "<div>中国结通吃奖：" + formatMoney(totals.knot) + "</div>",
+        "<div>幸运奖：" + formatMoney(totals.bonus) + "</div>"
       ].join("");
-      winCountLabel.textContent = winCount + " 次";
+      winCountLabel.textContent = totals.winCount + " 次";
     }
 
     function updateStatus() {
@@ -1309,7 +1435,7 @@
         bonusProgress.textContent = "未购票";
         numberProgress.textContent = "未购票";
         mainProgress.textContent = "未购票";
-        statusText.textContent = "当前未购买彩票。请选择面值后点击“购买一张”。";
+        statusText.textContent = "当前未购买彩票。已选择 " + selectedFace + " 元面值，请点击“购买一张”。";
         return;
       }
 
@@ -1333,8 +1459,7 @@
       }
 
       computeSettlement();
-      claimPayoutIfNeeded();
-      statusText.textContent = "本张彩票已全部开奖，所有奖项按规则兼中兼得并已汇总。";
+      statusText.textContent = "本张彩票已全部开奖，所有已刮出的奖项已实时汇总并入账。";
     }
 
     function revealCell(index) {
@@ -1345,9 +1470,34 @@
       cellEl.dataset.revealed = "1";
       ticketState.revealed.main += 1;
       const cell = ticketState.cells[index];
+      const totals = ticketState.totals;
+
+      if (cell.type === "number" && cell.winAmount > 0) {
+        totals.base += cell.winAmount;
+        totals.total += cell.winAmount;
+        totals.winCount++;
+        creditPayout(cell.winAmount, "刮出基础奖 " + formatMoney(cell.winAmount) + "，已存入钱袋。");
+      } else if (cell.type === "red") {
+        totals.red += cell.winAmount;
+        totals.total += cell.winAmount;
+        totals.winCount++;
+        creditPayout(cell.winAmount, "刮出“红”两倍奖 " + formatMoney(cell.winAmount) + "，已存入钱袋。");
+      } else if (cell.type === "lantern") {
+        totals.lantern += cell.winAmount;
+        totals.total += cell.winAmount;
+        totals.winCount++;
+        creditPayout(cell.winAmount, "刮出灯笼奖 " + formatMoney(cell.winAmount) + "，已存入钱袋。");
+      } else if (cell.type === "knot") {
+        totals.knot += cell.winAmount;
+        totals.total += cell.winAmount;
+        totals.winCount++;
+        creditPayout(cell.winAmount, "刮出中国结通吃奖 " + formatMoney(cell.winAmount) + "，已存入钱袋。");
+      }
+
       if (cell.winAmount > 0 || cell.type === "knot") {
         cellEl.classList.add("highlight");
       }
+      computeSettlement();
       updateStatus();
     }
 
@@ -1374,8 +1524,8 @@
       ruleSummary.innerHTML = [
         "<div><strong>通用：</strong>4 个中奖号码为全部主区比对基准，幸运奖独立计算。</div>",
         "<div><strong>" + rule.label + "：</strong>" + rule.brief + "</div>",
-        "<div><strong>概率：</strong>本页按新增概率图配置奖级分布；5 元面值因图片未列完整分档概率，按综合中奖率 64.8% 做近似分配。</div>",
-        "<div><strong>结算：</strong>同一格仅触发一种逻辑，不同格与幸运奖可叠加。</div>",
+        "<div><strong>概率：</strong>当前已下调整体返奖，体验目标约为购买 100 元回收 40 元左右。</div>",
+        "<div><strong>结算：</strong>刮出单个奖项后立即计入汇总和钱袋，不必等全票刮完。</div>",
         "<div><strong>核验：</strong>保安区仅用于兑奖校验，提前刮开视为作废。</div>"
       ].join("");
     }
@@ -1402,16 +1552,23 @@
       resetSummary();
     }
 
-    function renderTicket(face) {
+    function purchaseTicket(face) {
+      if (ticketState) {
+        const done = ticketState.revealed;
+        const completed = done.bonus && done.numbers && done.main === ticketState.cells.length;
+        if (!completed) {
+          statusText.textContent = "当前彩票尚未刮完，不能直接购买新票。";
+          return;
+        }
+      }
+
       if (!canAfford(face)) {
         updateWalletUI("余额不足 " + face + " 元，不能购买该面值彩票。");
         statusText.textContent = "请选择当前余额可购买的面值。";
         return;
       }
 
-      currentFace = face;
       walletBalance -= face;
-      payoutClaimed = false;
       ticketState = createTicket(face);
       configureStaticText();
       resetSummary();
@@ -1422,6 +1579,13 @@
 
       bonusScratcher = setupScratchSurface(bonusCanvas, "幸运奖", () => {
         ticketState.revealed.bonus = true;
+        ticketState.totals.bonus += ticketState.bonus;
+        ticketState.totals.total += ticketState.bonus;
+        if (ticketState.bonus > 0) {
+          ticketState.totals.winCount++;
+          creditPayout(ticketState.bonus, "刮出幸运奖 " + formatMoney(ticketState.bonus) + "，已存入钱袋。");
+        }
+        computeSettlement();
         updateStatus();
       });
 
@@ -1439,14 +1603,76 @@
       });
     }
 
+    function revealAll() {
+      if (!ticketState) {
+        return;
+      }
+
+      if (!revealAuthorized) {
+        openPasswordModal();
+        return;
+      }
+
+      if (!ticketState.revealed.numbers && numberScratcher) {
+        numberScratcher.reveal();
+      }
+
+      Array.from(gameBoard.children).forEach((cellEl) => {
+        if (cellEl.dataset.revealed !== "1" && cellEl._scratcher) {
+          cellEl._scratcher.reveal();
+        }
+      });
+
+      if (!ticketState.revealed.bonus && bonusScratcher) {
+        bonusScratcher.reveal();
+      }
+
+      updateStatus();
+    }
+
     faceTabs.forEach((tab) => {
       tab.addEventListener("click", () => {
-        renderTicket(Number(tab.dataset.face));
+        selectedFace = Number(tab.dataset.face);
+        faceTabs.forEach((item) => {
+          item.classList.toggle("active", Number(item.dataset.face) === selectedFace);
+        });
+        if (!ticketState) {
+          updateStatus();
+        } else {
+          statusText.textContent = "当前彩票仍可继续刮奖。已预选下一张为 " + selectedFace + " 元。";
+        }
       });
     });
 
     newTicketButton.addEventListener("click", () => {
-      renderTicket(currentFace);
+      purchaseTicket(selectedFace);
+    });
+
+    revealAllButton.addEventListener("click", revealAll);
+
+    passwordCancelButton.addEventListener("click", () => {
+      closePasswordModal();
+      statusText.textContent = "已取消一键开奖。";
+    });
+
+    passwordConfirmButton.addEventListener("click", () => {
+      if (passwordInput.value !== "123456") {
+        passwordError.textContent = "密码错误，请重新输入。";
+        passwordInput.focus();
+        passwordInput.select();
+        return;
+      }
+
+      revealAuthorized = true;
+      closePasswordModal();
+      statusText.textContent = "密码验证成功，本次进入后续可直接使用一键开奖。";
+      revealAll();
+    });
+
+    passwordInput.addEventListener("keydown", (event) => {
+      if (event.key === "Enter") {
+        passwordConfirmButton.click();
+      }
     });
 
     window.addEventListener("resize", () => {
